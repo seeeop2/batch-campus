@@ -38,6 +38,11 @@ public class Customer {
         this.status = Status.NORMAL;
     }
 
+    // Test 하기 위하여, 로그인 시간에 대해서만 Setter 작성함.
+    public void setLoginAt(LocalDateTime loginAt) {
+        this.loginAt = loginAt;
+    }
+
     // 고객 상태를 정의하는 열거형
     public enum Status {
         NORMAL,
