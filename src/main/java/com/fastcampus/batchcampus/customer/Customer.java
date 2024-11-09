@@ -43,6 +43,11 @@ public class Customer {
         this.loginAt = loginAt;
     }
 
+    // Test 하기 위하여, 상태에 대해서 Setter 작성함.
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     // 고객 상태를 정의하는 열거형
     public enum Status {
         NORMAL,
