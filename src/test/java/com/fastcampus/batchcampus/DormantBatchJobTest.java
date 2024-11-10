@@ -1,5 +1,7 @@
 package com.fastcampus.batchcampus;
 
+import com.fastcampus.batchcampus.batch.BatchStatus;
+import com.fastcampus.batchcampus.batch.JobExecution;
 import com.fastcampus.batchcampus.customer.Customer;
 import com.fastcampus.batchcampus.customer.CustomerRepository;
 import org.assertj.core.api.Assertions;
@@ -48,15 +50,16 @@ class DormantBatchJobTest {
         saveCustomer(364);
 
         // when: 테스트가 일어났을 때
-        dormantBatchJob.execute();
+        final JobExecution result = dormantBatchJob.execute();
 
         // then: 결과
         // 휴면 상태인 고객 수 계산
         final long dormantCount = customerRepository.findAll().stream().filter(it -> it.getStatus() == Customer.Status.DORMANT).count();
+
         // 예상 결과와 비교
         Assertions.assertThat(dormantCount).isEqualTo(3);
+        Assertions.assertThat(result.getStatus()).isEqualTo(BatchStatus.COMPLETED);
     }
-
 
     @DisplayName("고객이 열 명이 있지만, 모두 다 휴면전환대상이면(1년 경과한사람) 휴면전환 대상은 10명이다.")
     @Test
@@ -74,7 +77,7 @@ class DormantBatchJobTest {
         saveCustomer(400);
 
         // when: 배치 작업 실행
-        dormantBatchJob.execute();
+        final JobExecution result = dormantBatchJob.execute();
 
         // then: 결과
         // 휴면 상태인 고객 수 계산
@@ -82,6 +85,7 @@ class DormantBatchJobTest {
 
         // 예상 결과와 비교
         Assertions.assertThat(dormantCount).isEqualTo(10);
+        Assertions.assertThat(result.getStatus()).isEqualTo(BatchStatus.COMPLETED);
     }
 
     @DisplayName("고객이 없는 경우에도 배치는 정상 동작해야 한다.")
@@ -89,7 +93,7 @@ class DormantBatchJobTest {
     void test3(){
 
         // when: 고객 데이터가 없는 경우 배치 작업 실행
-        dormantBatchJob.execute();
+        final JobExecution result = dormantBatchJob.execute();
 
         // then: 결과 확인
         // 휴면 상태인 고객 수 계산
@@ -97,7 +101,21 @@ class DormantBatchJobTest {
 
         // 예상 결과와 비교
         Assertions.assertThat(dormantCount).isEqualTo(0);
+        Assertions.assertThat(result.getStatus()).isEqualTo(BatchStatus.COMPLETED);
+    }
 
+    @Test
+    @DisplayName("배치가 실패하면 BatchStatus는 FAILED를 반환해야한다.")
+    void test4(){
+
+        // given: 고객 리포지토리 주입 없이 배치 작업 인스턴스 생성
+        DormantBatchJob dormantBatchJob = new DormantBatchJob(null);
+
+        // when: 배치 작업 실행
+        JobExecution result = dormantBatchJob.execute();
+
+        // then: 결과 확인
+        Assertions.assertThat(result.getStatus()).isEqualTo(BatchStatus.FAILED);
     }
 
     // 고객을 저장하는 헬퍼 메서드
@@ -111,4 +129,5 @@ class DormantBatchJobTest {
         // 고객 정보 저장
         customerRepository.save(test);
     }
+
 }
