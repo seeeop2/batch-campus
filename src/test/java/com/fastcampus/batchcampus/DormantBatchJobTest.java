@@ -1,6 +1,7 @@
 package com.fastcampus.batchcampus;
 
 import com.fastcampus.batchcampus.batch.BatchStatus;
+import com.fastcampus.batchcampus.batch.Job;
 import com.fastcampus.batchcampus.batch.JobExecution;
 import com.fastcampus.batchcampus.customer.Customer;
 import com.fastcampus.batchcampus.customer.CustomerRepository;
@@ -14,8 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 class DormantBatchJobTest {
 
@@ -23,7 +22,7 @@ class DormantBatchJobTest {
     private CustomerRepository customerRepository;
 
     @Autowired
-    private DormantBatchJob dormantBatchJob;
+    private Job job;
 
     // 각 테스트 전에 데이터베이스 초기화
     @BeforeEach
@@ -50,7 +49,7 @@ class DormantBatchJobTest {
         saveCustomer(364);
 
         // when: 테스트가 일어났을 때
-        final JobExecution result = dormantBatchJob.execute();
+        final JobExecution result = job.execute();
 
         // then: 결과
         // 휴면 상태인 고객 수 계산
@@ -77,7 +76,7 @@ class DormantBatchJobTest {
         saveCustomer(400);
 
         // when: 배치 작업 실행
-        final JobExecution result = dormantBatchJob.execute();
+        final JobExecution result = job.execute();
 
         // then: 결과
         // 휴면 상태인 고객 수 계산
@@ -93,7 +92,7 @@ class DormantBatchJobTest {
     void test3(){
 
         // when: 고객 데이터가 없는 경우 배치 작업 실행
-        final JobExecution result = dormantBatchJob.execute();
+        final JobExecution result = job.execute();
 
         // then: 결과 확인
         // 휴면 상태인 고객 수 계산
@@ -109,7 +108,7 @@ class DormantBatchJobTest {
     void test4(){
 
         // given: 고객 리포지토리 주입 없이 배치 작업 인스턴스 생성
-        DormantBatchJob dormantBatchJob = new DormantBatchJob(null);
+        Job dormantBatchJob = new Job(null, null);
 
         // when: 배치 작업 실행
         JobExecution result = dormantBatchJob.execute();
