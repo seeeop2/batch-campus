@@ -1,5 +1,8 @@
 package com.fastcampus.batchcampus.batch;
 
+import com.fastcampus.batchcampus.customer.Customer;
+import lombok.Builder;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -13,6 +16,12 @@ public class Job {
     // Tasklet만을 받는 생성자
     public Job(Tasklet tasklet) {
         this(tasklet, null);
+    }
+
+    // Builder 패턴을 사용하는 생성자: ItemReader, ItemProcessor, ItemWriter를 받아 SimpleTasklet 생성
+    @Builder
+    public Job(ItemReader<Customer> itemReader, ItemProcessor<Customer,Customer> itemProcessor, ItemWriter<Customer> itemWriter, JobExecutionListener jobExecutionListener) {
+        this (new SimpleTasklet(itemReader, itemProcessor, itemWriter), jobExecutionListener);
     }
 
     // 생성자: CustomerRepository 주입 및 Fake EmailProvider 초기화
