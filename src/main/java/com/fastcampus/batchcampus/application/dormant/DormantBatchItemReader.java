@@ -1,4 +1,4 @@
-package com.fastcampus.batchcampus.application;
+package com.fastcampus.batchcampus.application.dormant;
 
 import com.fastcampus.batchcampus.batch.ItemReader;
 import com.fastcampus.batchcampus.customer.Customer;
