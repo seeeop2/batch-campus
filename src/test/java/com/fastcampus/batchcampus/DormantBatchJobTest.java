@@ -3,6 +3,7 @@ package com.fastcampus.batchcampus;
 import com.fastcampus.batchcampus.batch.BatchStatus;
 import com.fastcampus.batchcampus.batch.Job;
 import com.fastcampus.batchcampus.batch.JobExecution;
+import com.fastcampus.batchcampus.batch.TaskletJob;
 import com.fastcampus.batchcampus.customer.Customer;
 import com.fastcampus.batchcampus.customer.CustomerRepository;
 import org.assertj.core.api.Assertions;
@@ -108,7 +109,7 @@ class DormantBatchJobTest {
     void test4(){
 
         // given: 고객 리포지토리 주입 없이 배치 작업 인스턴스 생성
-        Job dormantBatchJob = new Job(null, null);
+        Job dormantBatchJob = new TaskletJob(null, null);
 
         // when: 배치 작업 실행
         JobExecution result = dormantBatchJob.execute();

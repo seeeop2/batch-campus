@@ -1,6 +1,7 @@
 package com.fastcampus.batchcampus.application;
 
 import com.fastcampus.batchcampus.batch.Job;
+import com.fastcampus.batchcampus.batch.TaskletJob;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,7 +18,7 @@ public class DormantBatchConfiguration {
                                DormantBatchJobExecutionListener dormantBatchJobExecutionListener){
 
         // Builder 패턴을 사용하여 Job 객체를 생성
-        return Job.builder()
+        return TaskletJob.builder()
                 .itemReader(dormantBatchItemReader)
                 .itemProcessor(dormantBatchItemProcessor)
                 .itemWriter(dormantBatchItemWriter)
