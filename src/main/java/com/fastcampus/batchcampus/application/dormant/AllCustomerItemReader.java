@@ -9,12 +9,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DormantBatchItemReader implements ItemReader<Customer> {
+public class AllCustomerItemReader implements ItemReader<Customer> {
 
     private final CustomerRepository customerRepository;
     private int pageNo = 0; // 페이지 번호 초기화
 
-    public DormantBatchItemReader(CustomerRepository customerRepository) {
+    public AllCustomerItemReader(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
 
