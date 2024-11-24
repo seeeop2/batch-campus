@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 
 // 비즈니스 로직 담당
 
-@Component
 public class SimpleTasklet implements Tasklet {
 
     private final ItemReader<Customer> itemReader; // 고객 정보를 읽기 위한 리더
