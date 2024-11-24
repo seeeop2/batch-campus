@@ -117,6 +117,22 @@ class DormantBatchJobTest {
         Assertions.assertThat(result.getStatus()).isEqualTo(BatchStatus.FAILED);
     }
 
+    @Test
+    @DisplayName("358일 전에 로그인한 고객에게 휴면계정 예정자라고 메일을 발송해야한다.")
+    void test5(){
+
+        // given
+        saveCustomer(358);
+        saveCustomer(358);
+        saveCustomer(358);
+        saveCustomer(35);
+        saveCustomer(35);
+
+        // when
+        // then
+        job.execute();
+    }
+
     // 고객을 저장하는 헬퍼 메서드
     private void saveCustomer(long loginMinusDays) {
         // 고유 ID 생성
