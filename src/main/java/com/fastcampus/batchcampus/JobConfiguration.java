@@ -10,6 +10,7 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.NonTransientResourceException;
 import org.springframework.batch.item.ParseException;
 import org.springframework.batch.item.UnexpectedInputException;
+import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -29,33 +30,47 @@ public class JobConfiguration {
     // Step 빈 생성: JobRepository와 PlatformTransactionManager를 사용하여 Step 객체 생성
     @Bean
     public Step step(JobRepository jobRepository,
-                     PlatformTransactionManager platformTransactionManager){
-
-        // ItemReader 구현: 정수 값을 읽어오는 Reader 생성
-        final ItemReader<Integer> itemReader = new ItemReader<>() {
-            private int count = 0; // 읽은 항목 수를 카운트
-
-            @Override
-            public Integer read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
-                count++; // 카운터 증가
-
-                log.info("Read : {}", count); // 현재 읽은 값 로그 출력
-
-                // 카운터가 15에 도달하면 null 반환 (읽기 종료)
-                if (count == 15) {
-                    return null;
-                }
-
-                return count; // 현재 카운터 값을 반환
-            }
-        };
-
-        // StepBuilder를 사용하여 Step 객체 생성
-        return new StepBuilder("step", jobRepository) // StepBuilder를 사용하여 Step 이름과 JobRepository 설정
-                .chunk(10, platformTransactionManager) // 청크 단위로 처리: 10개씩 읽고 트랜잭션 관리
-                .reader(itemReader) // ItemReader 설정
-                // .processor() // 데이터 처리기 설정 (현재는 주석 처리됨)
-                .writer(read -> {}) // ItemWriter 설정: 현재는 빈 구현
+                     PlatformTransactionManager platformTransactionManager) {
+        return new StepBuilder("step", jobRepository)
+                .tasklet((contribution, chunkContext) -> {
+                    log.info("step 실행"); // Step 실행 시 로그 출력
+                    return RepeatStatus.FINISHED; // Step 수행 완료 상태 반환
+                }, platformTransactionManager) // PlatformTransactionManager를 사용하여 트랜잭션 관리
+                .allowStartIfComplete(true) // Step이 완료된 경우에도 다시 시작 가능
+                .startLimit(5) // Step의 최대 시작 횟수를 5로 제한
                 .build();
     }
+
+//    // Step 빈 생성: JobRepository와 PlatformTransactionManager를 사용하여 Step 객체 생성
+//    @Bean
+//    public Step step(JobRepository jobRepository,
+//                     PlatformTransactionManager platformTransactionManager){
+//
+//        // ItemReader 구현: 정수 값을 읽어오는 Reader 생성
+//        final ItemReader<Integer> itemReader = new ItemReader<>() {
+//            private int count = 0; // 읽은 항목 수를 카운트
+//
+//            @Override
+//            public Integer read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+//                count++; // 카운터 증가
+//
+//                log.info("Read : {}", count); // 현재 읽은 값 로그 출력
+//
+//                // 카운터가 15에 도달하면 null 반환 (읽기 종료)
+//                if (count == 15) {
+//                    return null;
+//                }
+//
+//                return count; // 현재 카운터 값을 반환
+//            }
+//        };
+//
+//        // StepBuilder를 사용하여 Step 객체 생성
+//        return new StepBuilder("step", jobRepository) // StepBuilder를 사용하여 Step 이름과 JobRepository 설정
+//                .chunk(10, platformTransactionManager) // 청크 단위로 처리: 10개씩 읽고 트랜잭션 관리
+//                .reader(itemReader) // ItemReader 설정
+//                // .processor() // 데이터 처리기 설정 (현재는 주석 처리됨)
+//                .writer(read -> {}) // ItemWriter 설정: 현재는 빈 구현
+//                .build();
+//    }
 }
