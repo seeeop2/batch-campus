@@ -43,10 +43,16 @@ public class JobConfiguration {
 
                 log.info("Read : {}", count); // 현재 읽은 값 로그 출력
 
-                // 카운터가 15에 도달하면 null 반환 (읽기 종료)
-                if (count >= 15) {
-                    throw new IllegalStateException("예외가 발생했어요.");
+                // 카운터가 20에 도달하면 null 반환 (읽기 종료)
+                if (count == 20) {
+                    return null; // 더 이상 읽을 항목이 없음을 나타냄
                 }
+
+                // 카운터가 15에 도달하면 IllegalStateException 예외 발생
+                if (count >= 15) {
+                    throw new IllegalStateException("예외가 발생했어요."); // 예외 발생
+                }
+
                 return count; // 현재 카운터 값을 반환
             }
         };
@@ -58,9 +64,7 @@ public class JobConfiguration {
                 // .processor() // 데이터 처리기 설정 (현재는 주석 처리됨)
                 .writer(read -> {}) // ItemWriter 설정: 현재는 빈 구현
                 .faultTolerant() // 오류 발생 시에도 작업을 계속 진행할 수 있도록 설정
-                // .skip(IllegalStateException.class) // 특정 예외에 대해 스킵 설정 (간단한 요구사항 경우 사용)
-                // .skipLimit(3) // 스킵 한도 설정 (간단한 요구사항 경우 사용)
-                .skipPolicy((t, skipCount) -> t instanceof IllegalStateException && skipCount < 5) // 스킵 정책 설정: IllegalStateException 발생 시 최대 5회까지 스킵 (복잡한 요구사항 경우 사용)
+                .noRollback(IllegalStateException.class) // IllegalStateException 발생 시 롤백하지 않도록 설정
                 .build();
     }
 }
