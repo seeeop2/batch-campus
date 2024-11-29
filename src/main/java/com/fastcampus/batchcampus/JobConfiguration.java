@@ -8,10 +8,7 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.skip.SkipLimitExceededException;
 import org.springframework.batch.core.step.skip.SkipPolicy;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.NonTransientResourceException;
-import org.springframework.batch.item.ParseException;
-import org.springframework.batch.item.UnexpectedInputException;
+import org.springframework.batch.item.*;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,23 +45,36 @@ public class JobConfiguration {
                     return null; // 더 이상 읽을 항목이 없음을 나타냄
                 }
 
-                // 카운터가 15에 도달하면 IllegalStateException 예외 발생
-                if (count >= 15) {
-                    throw new IllegalStateException("예외가 발생했어요."); // 예외 발생
-                }
+//                // 카운터가 15에 도달하면 IllegalStateException 예외 발생
+//                if (count >= 15) {
+//                    throw new IllegalStateException("예외가 발생했어요."); // 예외 발생
+//                }
 
                 return count; // 현재 카운터 값을 반환
             }
         };
 
+        // ItemProcessor 구현: 읽은 값을 처리하는 Processor 생성
+        ItemProcessor<Integer, Integer> itemProcessor = new ItemProcessor<>() {
+            @Override
+            public Integer process(Integer item) throws Exception {
+                // 처리 중 item이 15일 경우 IllegalStateException 예외 발생
+                if (item == 15) {
+                    throw new IllegalStateException(); // 예외 발생
+                }
+                return item; // 처리된 항목 반환
+            }
+        };
+
         // StepBuilder를 사용하여 Step 객체 생성
         return new StepBuilder("step", jobRepository) // StepBuilder를 사용하여 Step 이름과 JobRepository 설정
-                .chunk(10, platformTransactionManager) // 청크 단위로 처리: 10개씩 읽고 트랜잭션 관리
+                .<Integer, Integer>chunk(10, platformTransactionManager) // 청크 단위로 처리: 10개씩 읽고 트랜잭션 관리
                 .reader(itemReader) // ItemReader 설정
-                // .processor() // 데이터 처리기 설정 (현재는 주석 처리됨)
+                .processor(itemProcessor) // 데이터 처리기 설정
                 .writer(read -> {}) // ItemWriter 설정: 현재는 빈 구현
                 .faultTolerant() // 오류 발생 시에도 작업을 계속 진행할 수 있도록 설정
-                .noRollback(IllegalStateException.class) // IllegalStateException 발생 시 롤백하지 않도록 설정
+                .retry(IllegalStateException.class) // IllegalStateException에 대해 재시도 설정
+                .retryLimit(5) // 최대 5회 재시도 설정
                 .build();
     }
 }
