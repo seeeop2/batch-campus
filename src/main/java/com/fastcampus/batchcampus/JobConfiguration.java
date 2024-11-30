@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Slf4j
-@Configuration
+//@Configuration
 public class JobConfiguration {
 
     // Job 빈 생성: JobRepository와 Step을 사용하여 Job 객체 생성
