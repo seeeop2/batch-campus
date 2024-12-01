@@ -1,5 +1,6 @@
 package com.fastcampus.batchcampus;
 
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -7,6 +8,8 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
+import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.transform.Range;
@@ -35,10 +38,10 @@ public class ItemReaderJobConfiguration {
     @Bean
     public Step step(JobRepository jobRepository,
                      PlatformTransactionManager transactionManager,
-                     ItemReader<User> jsonItemReader){
+                     ItemReader<User> jpaCursorItemReader){
         return new StepBuilder("step", jobRepository)
                 .<User, User>chunk(2, transactionManager) // 청크 단위로 처리: 2개씩 읽고 트랜잭션 관리
-                .reader(jsonItemReader) // ItemReader 설정: JSON 파일로부터 읽기
+                .reader(jpaCursorItemReader) // ItemReader 설정: JSON 파일로부터 읽기
                 .writer(System.out::println) // ItemWriter 설정: 읽은 데이터를 콘솔에 출력
                 .build();
     }
@@ -79,6 +82,27 @@ public class ItemReaderJobConfiguration {
                 .name("jsonItemReader") // Reader 이름 설정
                 .resource(new ClassPathResource("users.json")) // 읽어올 파일 경로 설정
                 .jsonObjectReader(new JacksonJsonObjectReader<>(User.class)) // JSON 객체를 User 클래스에 맞게 읽기 설정
+                .build();
+    }
+
+    // JpaPagingItemReader 빈 생성: JPA를 사용하여 페이징 방식으로 데이터를 읽어오는 Reader 생성
+    @Bean
+    public ItemReader<User> jpaPagingItemReader(EntityManagerFactory entityManagerFactory){
+        return new JpaPagingItemReaderBuilder<User>()
+                .name("jpaPagingItemReader") // Reader 이름 설정
+                .entityManagerFactory(entityManagerFactory) // JPA EntityManager 설정
+                .pageSize(3) // 한 페이지에 읽어올 데이터 수 설정
+                .queryString("SELECT u FROM User u ORDER BY u.id") // 데이터 조회 쿼리 설정
+                .build();
+    }
+
+    // JpaCursorItemReader 빈 생성: JPA를 사용하여 커서 방식으로 데이터를 읽어오는 Reader 생성
+    @Bean
+    public ItemReader<User> jpaCursorItemReader(EntityManagerFactory entityManagerFactory){
+        return new JpaCursorItemReaderBuilder<User>()
+                .name("jpaCursorItemReader") // Reader 이름 설정
+                .entityManagerFactory(entityManagerFactory) // JPA EntityManager 설정
+                .queryString("SELECT u FROM User u ORDER BY u.id") // 데이터 조회 쿼리 설정
                 .build();
     }
 
