@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
-@Configuration
+//@Configuration
 public class ItemReaderJobConfiguration {
 
     // Job 빈 생성: JobRepository와 Step을 사용하여 itemReaderJob 객체 생성
