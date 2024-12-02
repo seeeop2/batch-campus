@@ -26,7 +26,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 
-@Configuration
+//@Configuration
 public class ItemWriterJobConfiguration {
 
     // Job 빈 생성: JobRepository와 Step을 사용하여 itemReaderJob 객체 생성
