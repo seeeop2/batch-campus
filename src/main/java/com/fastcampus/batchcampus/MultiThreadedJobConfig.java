@@ -16,7 +16,7 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Slf4j
-@Configuration
+//@Configuration
 public class MultiThreadedJobConfig {
 
     // Job 빈 생성: JobRepository와 Step을 사용하여 multiThreadJob 객체 생성
