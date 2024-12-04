@@ -17,7 +17,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Slf4j
 //@Configuration
-public class MultiThreadedJobConfig {
+public class MultiThreadedJobConfiguration {
 
     // Job 빈 생성: JobRepository와 Step을 사용하여 multiThreadJob 객체 생성
     @Bean

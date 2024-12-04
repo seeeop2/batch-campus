@@ -16,8 +16,8 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Slf4j // 로깅을 위한 어노테이션
-@Configuration
-public class ParallelStepJobConfig {
+//@Configuration
+public class ParallelStepJobConfiguration {
 
     // Job 구성: flow1과 flow2를 실행한 후 step4로 진행
     // flow1 (step1, step2)
