@@ -1,4 +1,4 @@
-package com.fastcampus.batchcampus;
+package com.fastcampus.batchcampus.example;
 
 import jakarta.persistence.EntityManagerFactory;
 import lombok.extern.slf4j.Slf4j;

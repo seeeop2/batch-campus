@@ -1,4 +1,4 @@
-package com.fastcampus.batchcampus;
+package com.fastcampus.batchcampus.example;
 
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.core.Job;
@@ -17,7 +17,6 @@ import org.springframework.batch.item.json.JacksonJsonObjectReader;
 import org.springframework.batch.item.json.JsonItemReader;
 import org.springframework.batch.item.json.builder.JsonItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
