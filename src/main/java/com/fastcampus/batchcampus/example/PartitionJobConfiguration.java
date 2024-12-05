@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@Configuration
+//@Configuration
 public class PartitionJobConfiguration {
 
     // Job 구성: partitionJob 이름으로 Job 생성
