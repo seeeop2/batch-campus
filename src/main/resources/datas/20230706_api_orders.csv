@@ -1,0 +1,11 @@
+id,customerId,url,state,createdAt
+ca3bbc1b-dc12-4fd9-a49e-cb954a2e6aff,1,/fastcampus/services/t,SUCCESS,20241207144512
+6eec04ce-29ab-4b96-a660-01aac0a7cca9,11,/fastcampus/services/z,SUCCESS,20241207144512
+276a4b06-cb07-4edf-8e8d-f44977bbff49,7,/fastcampus/services/d,FAIL,20241207144512
+7871badb-f6e3-4e08-a974-5fff4d27f6a6,12,/fastcampus/services/r,SUCCESS,20241207144512
+c0528886-fe8d-4901-8528-264b01d11521,2,/fastcampus/services/s,FAIL,20241207144512
+e44bca12-b210-4394-97f3-d8283095b38f,16,/fastcampus/services/u,SUCCESS,20241207144512
+d7bd9f21-f57a-4ebd-a0ab-10d1df472e1a,11,/fastcampus/services/t,SUCCESS,20241207144512
+d69ccc3b-7154-47f3-b832-231fd5f02b40,11,/fastcampus/services/v,FAIL,20241207144512
+4704eaf0-b94d-4f34-ae06-f07e40a8c6e0,13,/fastcampus/services/l,FAIL,20241207144512
+94d2dd5f-a854-45b1-b6c9-4d12b2e5bdc8,12,/fastcampus/services/a,FAIL,20241207144512
