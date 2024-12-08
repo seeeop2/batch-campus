@@ -1,12 +1,16 @@
 package com.fastcampus.batchcampus.batch.detail;
 
 import com.fastcampus.batchcampus.domain.ApiOrder;
+import com.fastcampus.batchcampus.domain.SettleDetail;
+import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.listener.ExecutionContextPromotionListener;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.database.JpaItemWriter;
+import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,8 +27,6 @@ public class SettleDetailStepConfiguration {
     private final PlatformTransactionManager platformTransactionManager;
 
     // 첫 번째 스텝: 파일의 고객 + 서비스별로 집계를 해서 Execution Context 안에 넣는다.
-    // 두 번째 스텝: 집계된 Execution Context 데이터를 가지고 DB에 Write 한다.
-
     // preSettleDetailStep: 고객 및 서비스별 집계 작업을 수행하는 스텝 정의
     @Bean
     public Step preSettleDetailStep(FlatFileItemReader<ApiOrder> preSettleDetailReader,
@@ -63,4 +65,24 @@ public class SettleDetailStepConfiguration {
         listener.setKeys(new String[]{"snapshots"}); // ExecutionContext에 프로모션할 키 설정
         return listener; // 리스너 반환
     }
+
+    // 두 번째 스텝: 집계된 Execution Context 데이터를 가지고 DB에 Write 한다.
+    @Bean
+    public Step settleDetailStep(SettleDetailReader settleDetailReader,
+                                 SettleDetailProcessor settleDetailProcessor,
+                                 JpaItemWriter<SettleDetail> settleDetailWriter){
+        return new StepBuilder("settleDetailStep", jobRepository)
+                .<KeyAndCount, SettleDetail>chunk(1000, platformTransactionManager)
+                .reader(settleDetailReader)
+                .processor(settleDetailProcessor)
+                .writer(settleDetailWriter)
+                .build();
+    }
+    @Bean
+    public JpaItemWriter<SettleDetail> settleDetailWriter(EntityManagerFactory entityManagerFactory){
+        return new JpaItemWriterBuilder<SettleDetail>()
+                .entityManagerFactory(entityManagerFactory)
+                .build();
+    }
+
 }

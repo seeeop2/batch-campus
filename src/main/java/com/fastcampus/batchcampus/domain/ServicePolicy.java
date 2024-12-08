@@ -47,4 +47,12 @@ public enum ServicePolicy {
                 .findFirst() // 첫 번째 일치하는 값을 찾음
                 .orElseThrow(); // 일치하는 값이 없으면 예외 발생
     }
+
+    // 주어진 ID에 해당하는 ServicePolicy를 찾는 메서드
+    public static ServicePolicy findById(Long id) {
+        return Arrays.stream(values()) // 모든 열거형 값을 스트림으로 변환
+                .filter(it -> it.id.equals(id)) // 주어진 ID와 일치하는 값을 필터링
+                .findFirst() // 첫 번째 일치하는 값을 찾음
+                .orElseThrow(); // 일치하는 값이 없으면 예외 발생
+    }
 }
